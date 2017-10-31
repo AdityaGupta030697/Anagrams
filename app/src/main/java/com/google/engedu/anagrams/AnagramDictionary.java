@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -28,12 +29,15 @@ public class AnagramDictionary {
     private static final int DEFAULT_WORD_LENGTH = 3;
     private static final int MAX_WORD_LENGTH = 7;
     private Random random = new Random();
+    private ArrayList<String> wordlist;
 
     public AnagramDictionary(Reader reader) throws IOException {
         BufferedReader in = new BufferedReader(reader);
         String line;
-        while((line = in.readLine()) != null) {
+        wordlist = new ArrayList();
+        while ((line = in.readLine()) != null) {
             String word = line.trim();
+            wordlist.add(word);
         }
     }
 
@@ -42,7 +46,21 @@ public class AnagramDictionary {
     }
 
     public List<String> getAnagrams(String targetWord) {
+
         ArrayList<String> result = new ArrayList<String>();
+        //sort the target word
+        String sortedWord = alphabeticalOrder(targetWord);
+
+        //iterate through all words to find anagrams
+        for (String word : wordlist) {
+            String sorted = alphabeticalOrder(word);
+            //if it matches to sortedTargetWord, then it's an anagram of it
+            if (sorted.equals(sortedWord)) {
+                //add the original word
+                result.add(word);
+            }
+        }
+
         return result;
     }
 
@@ -52,6 +70,20 @@ public class AnagramDictionary {
     }
 
     public String pickGoodStarterWord() {
-        return "stop";
+        return "ate";
+    }
+
+    /**
+     * Sorts given word in ascending order
+     *
+     * @param word word to be sorted
+     * @return sorted word
+     */
+
+    public String alphabeticalOrder(String word) {
+        char[] ch = word.toCharArray();
+        Arrays.sort(ch);
+        return new String(ch);
+
     }
 }
