@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -30,14 +32,37 @@ public class AnagramDictionary {
     private static final int MAX_WORD_LENGTH = 7;
     private Random random = new Random();
     private ArrayList<String> wordlist;
+    private HashSet<String> wordSet;
+    private HashMap<String, ArrayList<String>> lettersToWord;
 
     public AnagramDictionary(Reader reader) throws IOException {
         BufferedReader in = new BufferedReader(reader);
-        String line;
+        String line, key;
         wordlist = new ArrayList();
         while ((line = in.readLine()) != null) {
             String word = line.trim();
+            //add the word to the Set
+            wordSet.add(word);
+            //add the word to the ArrayList
             wordlist.add(word);
+            //Create new ArrayList
+            ArrayList arrayList = new ArrayList();
+            //key is the word in sorted order
+            key = alphabeticalOrder(word);
+            //check if key is already present
+            if (!lettersToWord.containsKey(key)) {
+                //add the word
+                arrayList.add(word);
+                //add the arraylist with the key
+                lettersToWord.put(key, arrayList);
+            } else {
+                //get the arraylist using the key
+                arrayList = lettersToWord.get(key);
+                arrayList.add(word);
+                //add the arraylist with the key
+                lettersToWord.put(key, arrayList);
+            }
+
         }
     }
 
