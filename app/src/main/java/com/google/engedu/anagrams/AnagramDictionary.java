@@ -39,6 +39,8 @@ public class AnagramDictionary {
         BufferedReader in = new BufferedReader(reader);
         String line, key;
         wordlist = new ArrayList();
+        wordSet = new HashSet<>();
+        lettersToWord = new HashMap<>();
         while ((line = in.readLine()) != null) {
             String word = line.trim();
             //add the word to the Set
@@ -67,7 +69,10 @@ public class AnagramDictionary {
     }
 
     public boolean isGoodWord(String word, String base) {
-        return true;
+        //if valid, then hashSet has that word in it && the word should not be a subString of the baseWord; i.e prefix or postfix
+        return wordSet.contains(word) && (!word.contains(base));
+
+
     }
 
     public List<String> getAnagrams(String targetWord) {
@@ -91,11 +96,36 @@ public class AnagramDictionary {
 
     public List<String> getAnagramsWithOneMoreLetter(String word) {
         ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> temp = new ArrayList<String>();
+        for (int i = 0; i < 26; i++) {
+            String new_word = word + (char) (97 + i);
+            String sorted_new_word = alphabeticalOrder(new_word);
+            if (lettersToWord.containsKey(sorted_new_word)) {
+                temp = lettersToWord.get(sorted_new_word);
+                for (String tword : temp) {
+                    if (!tword.contains(word)) //redundant but required
+                        result.add(tword);
+                }
+
+
+            }
+
+        }
         return result;
     }
 
     public String pickGoodStarterWord() {
-        return "ate";
+
+        while (true) {
+            int i = random.nextInt(wordlist.size());
+            String word = wordlist.get(i);
+            ArrayList<String> temp = lettersToWord.get(alphabeticalOrder(word));
+            if ((word.length() <= MAX_WORD_LENGTH) && (temp.size() >= MIN_NUM_ANAGRAMS)) {
+                return wordlist.get(i);
+            }
+        }
+
+
     }
 
     /**
