@@ -30,10 +30,12 @@ public class AnagramDictionary {
     private static final int MIN_NUM_ANAGRAMS = 5;
     private static final int DEFAULT_WORD_LENGTH = 3;
     private static final int MAX_WORD_LENGTH = 7;
+    public HashMap<Integer, ArrayList<String>> sizeToWords = new HashMap<>();
     private Random random = new Random();
     private ArrayList<String> wordlist;
     private HashSet<String> wordSet;
     private HashMap<String, ArrayList<String>> lettersToWord;
+    private int wordLength = DEFAULT_WORD_LENGTH;
 
     public AnagramDictionary(Reader reader) throws IOException {
         BufferedReader in = new BufferedReader(reader);
@@ -64,8 +66,17 @@ public class AnagramDictionary {
                 //add the arraylist with the key
                 lettersToWord.put(key, arrayList);
             }
-
+            //check word length and store in sizeToWords
+            if (sizeToWords.containsKey(word.length())) {
+                sizeToWords.get(word.length()).add(word);
+            } else {
+                ArrayList<String> temp = new ArrayList<>();
+                temp.add(word);
+                sizeToWords.put(word.length(), temp);
+            }
         }
+
+
     }
 
     public boolean isGoodWord(String word, String base) {
@@ -117,11 +128,28 @@ public class AnagramDictionary {
     public String pickGoodStarterWord() {
 
         while (true) {
-            int i = random.nextInt(wordlist.size());
-            String word = wordlist.get(i);
-            ArrayList<String> temp = lettersToWord.get(alphabeticalOrder(word));
-            if ((word.length() <= MAX_WORD_LENGTH) && (temp.size() >= MIN_NUM_ANAGRAMS)) {
-                return wordlist.get(i);
+
+
+            //get all words with 3/4/5 letters and pick from them only
+            ArrayList<String> tempList = sizeToWords.get(wordLength);
+
+            //generate a random number between 0 and sizeOf list obtained
+            int num = random.nextInt(tempList.size());
+
+
+            //pick random word from the arrayList
+//            String randomWord = wordList.get(num);
+            String randomWord = tempList.get(num);
+
+            //get all the anagrams for that random word
+            ArrayList<String> arrayList = (ArrayList<String>) getAnagramsWithOneMoreLetter(randomWord);
+
+            //validate the conditions given
+            if ((randomWord.length() == wordLength) && arrayList.size() > MIN_NUM_ANAGRAMS) {
+
+                //increment the wordLength for next stage
+                if (wordLength < MAX_WORD_LENGTH) wordLength++;
+                return randomWord;
             }
         }
 
