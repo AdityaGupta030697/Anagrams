@@ -1,5 +1,7 @@
 # A Simple Anagram Game
 
+This repository contains the code for the Google: Applied CS with Android course. This course revisits and implements concept from Data Structures and Algorithms as well as Artificial Intelligence.
+
 The mechanics of the game are as follows:
 
 - The game provides the user with a word from the dictionary.
